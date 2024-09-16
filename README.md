@@ -7,9 +7,10 @@
 `It provides  a function to find an image based on its semantic similarity to the text query`
 `Currently, it supports the Qdrant Vector Store, but other stores will be added soon....`
 
-```yaml
-Note: Before using the package , ensure your have follwing env variables "QDRANT_URL","QDRANT_API_KEY"
-```
+#### _IMPORTANT_!
+
+`Note: Before using the package , ensure your have follwing env variables "QDRANT_URL","QDRANT_API_KEY"`
+
 
 #### _Usage_ 
 
@@ -37,5 +38,5 @@ print(search_result)
 ```
 
 
->Author:Junaid Bashir
-    >Note:Currently Qdrant is the only supported vectorstore (new stores coming soon)
+> Author:Junaid Bashir
+> Note:Currently Qdrant is the only supported vectorstore (new stores coming soon)
