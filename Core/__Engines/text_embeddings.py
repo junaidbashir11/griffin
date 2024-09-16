@@ -2,7 +2,7 @@ from transformers import CLIPProcessor, CLIPModel
 import torch
 
 class TextEmbeddingEngine():
-    def __init__(self,text,model_name="openai/clip-vit-base-patch32"):
+    def __init__(self,text,model_name):
         # Initialize the model and processor once
         self.model = CLIPModel.from_pretrained(model_name)
         self.processor = CLIPProcessor.from_pretrained(model_name)

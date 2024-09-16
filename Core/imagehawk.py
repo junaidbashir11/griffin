@@ -3,54 +3,59 @@ from Core.__Engines.text_embeddings import TextEmbeddingEngine
 from Core.__VectorStores.qdrantvectorstore import SaveEmbeddings
 from qdrant_client import QdrantClient
 import os
-from typing import List
 
 class ImageHawk():
     def __init__(self,
-            new_collection:bool,
-            image_urls:List[str],
-            userid:str,
-            project:str,
-            qdrant_url=os.getenv("QDRANT_URL"),
-            qdrant_api_key=os.getenv("QDRANT_API_KEY")
+            model_name="openai/clip-vit-base-patch32",
+            vectorstore="qdrant",
+            collectionname="user:project"
             ):
+
+        self.model_name=model_name
+        self.vectorstore=vectorstore
+        self.collectionname=collectionname.split(":")
+        self.vectorstorecred={
+            "qdrant":[os.getenv("QDRANT_URL"),os.getenv("QDRANT_API_KEY")]
+        }
+        self.embedding_generation_result=False
+
+    def generate_image_embeddings(self,new_collection,imageurls):
+
+        embeddings,image_urls=ImageEmbeddingEngine(imageurls,model_name=self.model_name)
+
+        if self.vectorstore=="qdrant":
+            relevant_cred=self.vectorstorecred.get("qdrant")
         
-        self.new_collection=new_collection
-        self.image_urls=image_urls
-        self.qdrant_url=qdrant_url
-        self.qdrant_api_key=qdrant_api_key
-        self.userid=userid
-        self.project=project
+            save_result=SaveEmbeddings(
+                new=bool(new_collection),qdrant_url=relevant_cred[0],qdrant_api_key=relevant_cred[1],
+                embeddings=embeddings,image_urls=image_urls,userid=self.collectionname[0],project=self.collectionname[1]
+            )
+            if save_result==True:
+                self.embedding_generation_result=True
+            elif save_result==False:
+                self.embedding_generation_result=False
+        else:
+            print("Qdrant Currently supported")
 
-    def generate_image_embeddings(self):
-        embeddings,image_urls=ImageEmbeddingEngine(self.image_urls)
-        save_result=SaveEmbeddings(
-            new=bool(self.new_collection),qdrant_url=self.qdrant_url,qdrant_api_key=self.qdrant_api_key,
-            embeddings=embeddings,image_urls=image_urls,userid=self.userid,
-            agent=self.project
-        )
-        if save_result==True:
-            return True
-        elif save_result==False:
-            return False
+    def search_similar_images(self,text,result_limit):
 
-
-    def search_similar_images(self,text):
-
-        text_embedding =TextEmbeddingEngine(text)
-        client = QdrantClient(url=self.qdrant_url, api_key=self.qdrant_api_key,prefer_grpc=True)
-        search_result = client.search(
-        collection_name=f"{self.userid}_{self.project}_image",
-        query_vector=text_embedding.tolist(),
-        limit=1
-        )
-
-        #Display the search results
-        for result in search_result:
-            output={
-                "id":result.id,
-                "similarity_score":result.score,
-                "metadata":result.payload
-            }
-            return output
-
+        if self.embedding_generation_result==True:
+                
+                text_embedding =TextEmbeddingEngine(text,model_name=self.model_name)
+                if self.vectorstore=="qdrant":
+                    relevant_cred=self.vectorstorecred.get("qdrant")
+                    client = QdrantClient(url=relevant_cred[0], api_key=relevant_cred[1],prefer_grpc=True)
+                    search_result = client.search(
+                            collection_name=f"{self.collectionname[0]}_{self.collectionname[1]}_image",
+                            query_vector=text_embedding.tolist(),
+                            limit=int(result_limit)
+                    )
+                    for result in search_result:
+                        output={
+                        "id":result.id,
+                        "similarity_score":result.score,
+                        "metadata":result.payload
+                        }
+                        return output
+        else:
+            print("cannot call this method if embedding generation failed")

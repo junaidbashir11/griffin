@@ -6,7 +6,7 @@ from io import BytesIO
 
 
 class ImageEmbeddingEngine():
-    def __init__(self,image_urls, model_name="openai/clip-vit-base-patch32"):
+    def __init__(self,image_urls, model_name):
         # Initialize the model and processor once
         self.model = CLIPModel.from_pretrained(model_name)
         self.processor = CLIPProcessor.from_pretrained(model_name)
