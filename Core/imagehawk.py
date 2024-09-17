@@ -1,17 +1,16 @@
-from Core.__Engines.image_embeddings import ImageEmbeddingEngine
-from Core.__Engines.text_embeddings import TextEmbeddingEngine
-from Core.__VectorStores.qdrantvectorstore import SaveEmbeddings
+from Core.__Engines__.image_embeddings import ImageEmbeddingEngine
+from Core.__Engines__.text_embeddings import TextEmbeddingEngine
+from Core.__VectorStores__.qdrantvectorstore import SaveEmbeddings
 from qdrant_client import QdrantClient
 import os
 
 class ImageHawk():
     def __init__(self,
-            model_name="openai/clip-vit-base-patch32",
+            model_type="clip",
             vectorstore="qdrant",
             collectionname="user:project"
             ):
-
-        self.model_name=model_name
+        self.model_type=model_type
         self.vectorstore=vectorstore
         self.collectionname=collectionname.split(":")
         self.vectorstorecred={
@@ -20,8 +19,8 @@ class ImageHawk():
         self.embedding_generation_result=False
 
     def generate_image_embeddings(self,new_collection,imageurls):
-
-        embeddings,image_urls=ImageEmbeddingEngine(imageurls,model_name=self.model_name)
+        
+        embeddings,image_urls=ImageEmbeddingEngine(imageurls,model_type=self.model_type)
 
         if self.vectorstore=="qdrant":
             relevant_cred=self.vectorstorecred.get("qdrant")
@@ -41,7 +40,7 @@ class ImageHawk():
 
         if self.embedding_generation_result==True:
                 
-                text_embedding =TextEmbeddingEngine(text,model_name=self.model_name)
+                text_embedding =TextEmbeddingEngine(text,model_type=self.model_type)
                 if self.vectorstore=="qdrant":
                     relevant_cred=self.vectorstorecred.get("qdrant")
                     client = QdrantClient(url=relevant_cred[0], api_key=relevant_cred[1],prefer_grpc=True)
