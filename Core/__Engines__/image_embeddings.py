@@ -1,5 +1,7 @@
 from transformers import CLIPProcessor, CLIPModel
-#from transformers import BlipProcessor, BlipForConditionalGeneration
+from transformers import FlavaFeatureExtractor, FlavaModel
+
+
 from PIL import Image
 import requests
 import torch
@@ -28,9 +30,17 @@ class ImageEmbeddingEngine():
                 embedding = model.get_image_features(**inputs).numpy()
             return embedding.squeeze()
         
-        else:
-            print("other model types not supported")
+        elif self.model_type=="flava":
 
+            print("other model types not supported")
+            model = FlavaModel.from_pretrained("facebook/flava-full")
+            feature_extractor = FlavaFeatureExtractor.from_pretrained("facebook/flava-full")
+            image = Image.open(requests.get(image_bytes, stream=True).raw)
+            inputs = feature_extractor(images=[image], return_tensors="pt")
+            image_embedding = model.get_image_features(**inputs)
+            return image_embedding
+        else:
+            print("others models not supported yet")
 
     def get_embeddings_for_images(self):
         """Public method to get embeddings for a list of image URLs."""

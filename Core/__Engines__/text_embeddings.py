@@ -1,4 +1,5 @@
 from transformers import CLIPProcessor, CLIPModel
+from transformers import BertTokenizer, FlavaModel
 import torch
 
 class TextEmbeddingEngine():
@@ -19,6 +20,15 @@ class TextEmbeddingEngine():
             with torch.no_grad():
                 embedding =model.get_text_features(**inputs).numpy()
             return embedding.squeeze()
+        
+        elif self.model_type=="flava":
+
+            model = FlavaModel.from_pretrained("facebook/flava-full")
+            tokenizer = BertTokenizer.from_pretrained("facebook/flava-full")
+            inputs = tokenizer(text=["a photo of a dog"], return_tensors="pt", padding="max_length", max_length=77)
+            text_embedding = model.get_text_features(**inputs)
+            return text_embedding
+        
         else:
             print("other models not supported yet")
 

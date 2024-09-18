@@ -1,3 +1,3 @@
-from .imagehawk import ImageHawk
+from .griffin import Griffin
 
-__all__ = ['ImageHawk']
+__all__ = ['Griffin']

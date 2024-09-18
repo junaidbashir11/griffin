@@ -13,26 +13,26 @@
 
 
 #### _Usage_ 
-
 ```python
 `Import`  
-from imagehawk.Core import ImageHawk
+from griffin.Core import Griffin
 
 `Class initialization`
 
-imagehawk=ImageHawk(
+_griffin=Griffin(
+    model_type="clip",
     vectorstore="qdrant",
     collectionname="user:project"
 )
 `Image Embeddings  Generation and Saving in VectorStore`
 
-imagehawk.generate_image_embeddings(
+_griffin.generate_image_embeddings(
     new_collection=True , # OR False if collection already exists,
     imageurls=["https://samplelink/to/image1.jpg","https://samplelink/to/image2.jpg"]
 )
 `Text to Image Similarity Search`
 
-search_result=imagehawk.search_similar_images(text="query text",result_limit=1)
+search_result=_griffin.search_similar_images(text="query text",result_limit=1)
 print(search_result)
 
 ```
