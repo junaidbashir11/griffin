@@ -12,6 +12,11 @@
 `Note: Before using the package , ensure your have follwing env variables "QDRANT_URL","QDRANT_API_KEY"`
 
 
+<iframe src="https://drive.google.com/file/d/1Rk4gAaZyyqjK3fAtIeGaJBTxUYWw13jT/preview" width="640" height="480" allow="autoplay"></iframe>
+
+
+
+
 #### _Usage_ 
 ```python
 `Import`  
