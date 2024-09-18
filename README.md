@@ -1,5 +1,5 @@
 
-### _ImageHawk_
+### _Griffin_
 
 
 `This package generates embeddings for the given photos and saves them in the qdrant vector store`
