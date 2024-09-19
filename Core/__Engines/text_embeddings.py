@@ -25,7 +25,7 @@ class TextEmbeddingEngine():
 
             model = FlavaModel.from_pretrained("facebook/flava-full")
             tokenizer = BertTokenizer.from_pretrained("facebook/flava-full")
-            inputs = tokenizer(text=["a photo of a dog"], return_tensors="pt", padding="max_length", max_length=77)
+            inputs = tokenizer(text=[text], return_tensors="pt", padding="max_length", max_length=77)
             text_embedding = model.get_text_features(**inputs)
             return text_embedding
         
